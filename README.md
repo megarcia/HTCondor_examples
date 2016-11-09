@@ -19,13 +19,14 @@ Assuming that you have already installed [miniconda3](http://conda.pydata.org/mi
 
 `$ conda install pandas h5py [etc.]`
 
-`$ tar -czf python3.tar.gz miniconda3`
+Once you have all the right Python packages installed:
 
-`$ cp python3.tar.gz HTC_examples/`
-
-`$ cd HTC_examples`
-
-`$ chmod 755 */*.sh`
+```
+$ tar -czf python3.tar.gz miniconda3
+$ cp python3.tar.gz HTC_examples/
+$ cd HTC_examples
+$ chmod 755 */*.sh
+```
 
 ### Part 1: CSV_processing example
 
@@ -47,11 +48,18 @@ When the job is completed, you'll find a lot of processing (cleaning) informatio
 
 This example illustrates running HTCondor workflows.
 
-`$ cd ~/HTC_examples`
+Before you start, you need to get the two Landsat image files from my Google Drive (they are too large for me to keep on GitHub) and put them in the right place here:
+```
+$ cd ~/HTC_examples
+$ cd image_processing
+$ mkdir images
+$ cd images
+$ wget -O 20101003_276_lndsr_p026r027lt5_clipped.h5 https://drive.google.com/open?id=0B4-FFhSfVlLyQjJxX3NPTENpWkk
+$ wget -O 20111006_279_lndsr_p026r027lt5_clipped.h5 https://drive.google.com/open?id=0B4-FFhSfVlLyR1dfei11NmR1Tjg
+$ cd ../
+```
 
-`$ cd image_processing`
-
-The datafiles in the *images* subdirectory are Landsat 5 images of northeastern Minnesota for dates in 2010 and 2011 almost exactly 1 year apart. Within that time, a large forest fire occurred near the middle of the image. (The effects of another large, earlier forest fire are also visible in the northern part of both images.) We often examine the extent and severity of forest fires using calculated vegetation indices and before-and-after image differencing methods. Each of these datafiles contains metadata information and images that I have already processed from raw data to show surface reflectance measurements in six spectral bands (blue, green, red, near infrared, and two in the shortwave infrared range).
+The datafiles in your new *images* subdirectory are Landsat 5 images of northeastern Minnesota for dates in 2010 and 2011 almost exactly 1 year apart. Within that time, a large forest fire occurred near the middle of the image. (The effects of another large, earlier forest fire are also visible in the northern part of both images.) We often examine the extent and severity of forest fires using calculated vegetation indices and before-and-after image differencing methods. Each of these datafiles contains metadata information and images that I have already processed from raw data to show surface reflectance measurements in six spectral bands (blue, green, red, near infrared, and two in the shortwave infrared range).
 
 #### Part 2a: Short workflow
 
