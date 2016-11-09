@@ -1,0 +1,16 @@
+# UW-Madison HTCondor submit file
+# stitch_vi.sub
+universe = vanilla
+log = stitch_vi_$(date)_$(var).log
+error = stitch_vi_$(date)_$(var).err
+executable = stitch_vi.sh
+arguments = $(date) $(var)
+output = stitch_vi_$(date)_$(var).out
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../python3.tar.gz,stitch_vi.py,plot.py,$(date)_$(var).tar.gz
+request_cpus = 1
+request_memory = 8GB
+request_disk = 8GB
+requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
+queue 1

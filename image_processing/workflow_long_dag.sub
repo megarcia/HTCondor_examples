@@ -1,0 +1,46 @@
+JOB A_2010 chunk_L57_bands.sub
+VARS A_2010 date="20101003" h5name="20101003_276_lndsr_p026r027lt5_clipped.h5" nchunks="10"
+SCRIPT POST A_2010 calc_L57_chunk_vi_dag_gen.sh 20101003
+
+SUBDAG EXTERNAL B_2010 calc_L57_chunk_vi_20101003_dag.sub
+
+JOB C_2010_ndii stitch_vi.sub
+VARS C_2010_ndii date="20101003" var="ndii"
+SCRIPT PRE C_2010_ndii gather_vi_chunks.sh 20101003 ndii
+
+JOB C_2010_nbr stitch_vi.sub
+VARS C_2010_nbr date="20101003" var="nbr"
+SCRIPT PRE C_2010_nbr gather_vi_chunks.sh 20101003 nbr
+
+PARENT A_2010 CHILD B_2010
+PARENT B_2010 CHILD C_2010_ndii C_2010_nbr
+
+
+
+JOB A_2011 chunk_L57_bands.sub
+VARS A_2011 date="20111006" h5name="20111006_279_lndsr_p026r027lt5_clipped.h5" nchunks="10"
+SCRIPT POST A_2011 calc_L57_chunk_vi_dag_gen.sh 20111006
+
+SUBDAG EXTERNAL B_2011 calc_L57_chunk_vi_20111006_dag.sub
+
+JOB C_2011_ndii stitch_vi.sub
+VARS C_2011_ndii date="20111006" var="ndii"
+SCRIPT PRE C_2011_ndii gather_vi_chunks.sh 20111006 ndii
+
+JOB C_2011_nbr stitch_vi.sub
+VARS C_2011_nbr date="20111006" var="nbr"
+SCRIPT PRE C_2011_nbr gather_vi_chunks.sh 20111006 nbr
+
+PARENT A_2011 CHILD B_2011
+PARENT B_2011 CHILD C_2011_ndii C_2011_nbr
+
+
+
+JOB D_ndii diff_vi.sub
+VARS D_ndii date1="20101003" date2="20111006" var="ndii"
+
+JOB D_nbr diff_vi.sub
+VARS D_nbr date1="20101003" date2="20111006" var="nbr"
+
+PARENT C_2010_ndii C_2011_ndii CHILD D_ndii
+PARENT C_2010_nbr C_2011_nbr CHILD D_nbr

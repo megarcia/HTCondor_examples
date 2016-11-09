@@ -1,0 +1,16 @@
+# UW-Madison HTCondor submit file
+# chunk_L57_bands.sub
+universe = vanilla
+log = chunk_L57_bands_$(date).log
+error = chunk_L57_bands_$(date).err
+executable = chunk_L57_bands.sh
+arguments = $(h5name) $(nchunks)
+output = chunk_L57_bands_$(date).out
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../python3.tar.gz,chunk_L57_bands.py,images/$(h5name)
+request_cpus = 1
+request_memory = 8GB
+request_disk = 8GB
+requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
+queue 1

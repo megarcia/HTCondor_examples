@@ -1,0 +1,16 @@
+JOB A_2010 chunk_L57_bands.sub
+VARS A_2010 date="20101003" h5name="20101003_276_lndsr_p026r027lt5_clipped.h5" nchunks="10"
+SCRIPT POST A_2010 calc_L57_chunk_vi_dag_gen.sh 20101003
+
+SUBDAG EXTERNAL B_2010 calc_L57_chunk_vi_20101003_dag.sub
+
+JOB C_2010_ndii stitch_vi.sub
+VARS C_2010_ndii date="20101003" var="ndii"
+SCRIPT PRE C_2010_ndii gather_vi_chunks.sh 20101003 ndii
+
+JOB C_2010_nbr stitch_vi.sub
+VARS C_2010_nbr date="20101003" var="nbr"
+SCRIPT PRE C_2010_nbr gather_vi_chunks.sh 20101003 nbr
+
+PARENT A_2010 CHILD B_2010
+PARENT B_2010 CHILD C_2010_ndii C_2010_nbr
