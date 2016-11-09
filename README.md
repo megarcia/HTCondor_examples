@@ -113,7 +113,7 @@ xxxxxxxx workflow_short_dag.sub+XXXXXXXX  XX/XX XX:XX      3      1      _      
 
 Since I did not invoke any script(s) to manage (delete, move, etc.) all the resulting files, you'll find a bunch of intermediate *20101003_X_rows_XXXX-XXXX.h5* and *20101003_X.tar.gz* files that were created and used along the way. There will be many script *.err*, *.log*, and *.out* files. You'll also find the final output *20101003_ndii.h5* and *20101003_nbr.h5* datafiles and their corresponding *.png* figure plots. Your Normalized Burn Ratio (NBR) plot should look like this:
 
-![20101003_nbr.png](https://raw.githubusercontent.com/megarcia/HTC_examples/image_processing/results/20101003_nbr.png)
+![20101003_nbr.png](https://github.com/megarcia/HTCondor_examples/blob/master/image_processing/results/20101003_nbr.png)
 
 The result for the Normalized Difference Infrared Index (NDII) is calculated from a different Landsat band combination and shows different values, but generally similar features, over the image area. Both NDII and NBR are oriented on indicating both greenness and moisture content of the vegetation. Healthy vegetation is both green and high in moisture content, with high NDII or NBR values. Dry vegetation (as during a drought period) will likely have lower moisture content but may still be green. Senescing vegetation (as during the autumn) may be changing color but could remain filled with moisture. Dead vegetation is neither green nor (typically) full of moisture, with low NDII or NBR values.
 
@@ -131,12 +131,12 @@ If you want to remove the results of the short workflow example, do that now. Th
 
 The two images are processed in parallel to their respective vegetation indices, since that part of the workflow for each date does not depend on the results of the other. You should get the above NBR map and the corresponding map for the 2011 image, which looks like this:
 
-![20111006_nbr.png](https://raw.githubusercontent.com/megarcia/HTC_examples/image_processing/results/20111006_nbr.png)
+![20111006_nbr.png](https://github.com/megarcia/HTCondor_examples/blob/master/image_processing/results/20111006_nbr.png)
 
 You can see clearly the size and shape of the burned area near the center of this after-fire image. After these vegetation index calculations are completed for both dates, we then use both maps for each vegetation index to calculate and plot the differences. The difference-NBR (dNBR) map looks like this:
 
-![20101003_20111006_dnbr.png](https://raw.githubusercontent.com/megarcia/HTC_examples/image_processing/results/20101003_20111006_dnbr.png)
+![20101003_20111006_dnbr.png](https://github.com/megarcia/HTCondor_examples/blob/master/image_processing/results/20101003_20111006_dnbr.png)
 
 Our difference calculation takes into account a quirk of change detection using NBR, which often reverses the dates to give an idea of the severity of the change agent (the fire, in this case) which is the opposite of a value for the change in the vegetation health. (I myself prefer looking at NDII, but this is a better example of how fires are examined.) The US Forest Service also typically goes one step farther, adjusting the dNBR relative to its pre-fire value in case areas in the fire zone were already damaged from some earlier event. This is called the relative-dNBR (RdNBR) and for this fire event looks like this:
 
-![20101003_20111006_rdnbr.png](https://raw.githubusercontent.com/megarcia/HTC_examples/image_processing/results/20101003_20111006_rdnbr.png)
+![20101003_20111006_rdnbr.png](https://github.com/megarcia/HTCondor_examples/blob/master/image_processing/results/20101003_20111006_rdnbr.png)
