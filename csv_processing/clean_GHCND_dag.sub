@@ -1,0 +1,2 @@
+JOB A process_NCEI_00.sub
+VARS A csvfile="GHCND_WIS_2015.csv" outdir="./."

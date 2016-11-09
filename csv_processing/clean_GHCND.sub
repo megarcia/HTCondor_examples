@@ -1,0 +1,16 @@
+# UW-Madison HTCondor submit file
+# clean_GHCND.sub
+universe = vanilla
+log = clean_GHCND.log
+error = clean_GHCND.err
+executable = clean_GHCND.sh
+arguments = $(csvfile) $(outdir)
+output = clean_GHCND.out
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../python3.tar.gz,clean_GHCND.py,$(csvfile)
+request_cpus = 1
+request_memory = 8GB
+request_disk = 8GB
+requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
+queue 1
