@@ -23,8 +23,9 @@ Once you have all the right Python packages installed:
 
 ```
 $ tar -czf python3.tar.gz miniconda3
-$ cp python3.tar.gz HTC_examples/
-$ cd HTC_examples
+$ git clone https://github.com/megarcia/HTCondor_examples.git
+$ cp python3.tar.gz HTCondor_examples/
+$ cd HTCondor_examples
 $ chmod 755 */*.sh
 ```
 
@@ -50,7 +51,7 @@ This example illustrates running HTCondor workflows.
 
 Before you start, you need to get the two Landsat image files from my Google Drive (they are too large for me to keep on GitHub) and put them in the right place here:
 ```
-$ cd ~/HTC_examples
+$ cd ~/HTCondor_examples
 $ cd image_processing
 $ mkdir images
 $ cd images
