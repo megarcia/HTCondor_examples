@@ -49,7 +49,7 @@ When the job is completed, you'll find a lot of processing (cleaning) informatio
 
 This example illustrates running HTCondor workflows.
 
-Before you start, you need to get the two Landsat image files from my [Google Drive](https://drive.google.com/open?id=0B4-FFhSfVlLyQnNrbVlDeUhyZG8). They are too large for me to keep on GitHub, and I can't figure out a place to put them for you to download directly to the HTCondor system. Download them to your own computer (they're safe, I promise) and then in your HTCondor account:
+Before you start, you need to get the two Landsat image files from my [Google Drive](https://drive.google.com/open?id=0B4-FFhSfVlLyQnNrbVlDeUhyZG8). They are too large for me to keep on GitHub, and I can't figure out a place to put them for you to download directly to the HTCondor system. Go to that link and then right click and choose "Download" for each file to save them to your own computer (they're safe, I promise). Then in your HTCondor account:
 ```
 $ cd ~/HTCondor_examples
 $ cd image_processing
