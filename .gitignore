@@ -4,3 +4,4 @@
 *.bak
 *.old*
 ignore
+image_processing/images
