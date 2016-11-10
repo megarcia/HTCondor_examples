@@ -29,13 +29,13 @@ $ cd HTCondor_examples
 $ chmod 755 */*.sh
 ```
 
-### Part 1: CSV_processing example
+### Part 1a: CSV processing example
 
 This example illustrates the basic HTCondor job unit.
 
 `$ cd csv_processing`
 
-The data file *GHCND_WIS_2015.csv* is named to indicate source, geographic coverage, and temporal coverage. These are [Global Historic Climate Network-Daily (GHCND)](http://www.ncdc.noaa.gov/data-access/land-based-station-data/land-based-datasets/global-historical-climatology-network-ghcn) surface weather observations for all 1st-order and cooperative stations in the rectangle containing Wisconsin for 2015. The dataset has a header line with column names, and includes a number of fields such as location, measurements, and data quality flags. The Python script *clean_GHCND.py* was written to "clean" this raw dataset, removing flagged measurements and stations without location information, etc. This is the same routine as the Python script *process_NCEI_00.py* that is used in my [WxCD project](https://megarcia.github.io/WxCD).
+The data file *GHCND_WIS_2015.csv* is named to indicate source, geographic coverage, and temporal coverage. These are [Global Historic Climate Network-Daily (GHCND)](http://www.ncdc.noaa.gov/data-access/land-based-station-data/land-based-datasets/global-historical-climatology-network-ghcn) surface weather observations for all 1st-order and cooperative stations in the rectangle containing Wisconsin for 2015. The dataset has a header line with column names, and includes a number of fields such as location, measurements, and data quality flags. I wrote the Python script *clean_GHCND.py* to "clean" this raw dataset, removing flagged measurements and stations without location information, etc. This is the same procedure as *process_NCEI_00.py* in my [WxCD project](https://megarcia.github.io/WxCD).
 
 `$ condor_submit clean_GHCND.sub`
 
@@ -45,9 +45,67 @@ You can check the job status with
 
 When the job is completed, you'll find a lot of processing (cleaning) information in the *clean_GHCND.out* file. The original input datafile is left intact, and you'll find new *.csv* files with various info on the errors encountered and the cleaned dataset. The results can be further used for temporal examination, spatial analysis, etc.
 
-### Part 2: Image_processing example
+### Part 1b: Thinking ahead
 
-This example illustrates running HTCondor workflows.
+Let's say you have another year of data in *GHCND_WIS_2016.csv* that you want to process in the same way. You have a few ways forward here.
+
+The easiest option might be to edit the *clean_GHCND.sub* file with the new file name, then run the job as we did for the 2015 file. At the end of the job you'll receive new *.csv* output files for the 2016 dataset, as desired, but you'll also get back a new *clean_GHCND.out* file that will overwrite your 2015 *clean_GHCND.out* file that you may have wanted for a record of the processing decisions. You can manually rename the old one to *clean_GHCND_2015.out* before running the new one, and then manually rename the new output as well. For a couple of files, it gets the job done, but what if you have 30 years of data in separate files?
+
+The next-easiest option might be to name those output files as desired in *clean_GHCND.sub* itself. You can edit the file names that are delivered as job log, error, and output on their respective lines so that the names are more specific to the job, e.g. *output = clean_GHCND_2015.out*. You might want to rename the submit file to *clean_GHCND_2015.sub* given how specific it is inside. Then you can copy it to *clean_GHCND_2016.sub*, edit the date everywhere it appears in that new submit file, and run your 2016 dataset as its own job. Now repeat that copy/edit/submit process 28 more times for the remainder of your 30-year dataset.
+
+Instead of all that extra work, the HTCondor system with DAGMan capabilities lets us use variables in submit files. If the only thing that really changes from one job to the next is the year, we might make that our submit file variable with a value that is assigned elsewhere. In this case, edit *clean_GHCND.sub* so that *output = clean_GHCND_$(year).out* and the log and error lines are changed likewise. Also edit it so that the *arguments* and *transfer_input_files* lines also use that variable. Your *clean_GHCND.sub* file should end up looking like this:
+
+```
+# UW-Madison HTCondor submit file
+# clean_GHCND.sub
+universe = vanilla
+log = clean_GHCND_$(year).log
+error = clean_GHCND_$(year).err
+executable = clean_GHCND.sh
+arguments = GHCND_WIS_$(year).csv ./.
+output = clean_GHCND_$(year).out
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../python3.tar.gz,clean_GHCND.py,GHCND_WIS_$(year).csv
+request_cpus = 1
+request_memory = 8GB
+request_disk = 8GB
+requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
+queue 1
+```
+
+Note that the names of *clean_GHCND.sh* and *clean_GHCND.py* remain unchanged, since we want to use those scripts as they're already written. Now we need to assign the values for the *year* variable, for which we create a DAG file. At its most basic, to run the single job that we processed above, we could create a file *clean_GHCND_dag.sub* with only two lines:
+
+```
+JOB A_2015 clean_GHCND.sub
+VARS A_2015 year="2015"
+```
+
+Note first that the *JOB* declaration must come first, that the *VARS* declaration must have a job name (*A_2015*) that matches the *JOB* line, and that the variable name itself must match what you're using in the *.sub* file that you declared on the *JOB* line. Note that the variable value must be in quotes, whether it's a number or an alphanumeric string (such as a file name or a directory path).
+
+At this point you might want to clean up your directory with
+
+`$ rm *.err *.log *.out`
+
+Then type a slightly different command:
+
+`$ condor_submit_dag clean_GHCND_dag.sub`
+
+When the job is complete, we should get the same output that we received the first time through, but with the output files named a little more specifically, as we'll want when processing more than one year of data. So let's add another job to *clean_GHCND_dag.sub*:
+
+```
+JOB A_2015 clean_GHCND.sub
+VARS A_2015 year="2015"
+
+JOB A_2016 clean_GHCND.sub
+VARS A_2016 year="2016"
+```
+
+Clean up your directory again if you like, then submit your new two-job DAG file with the same command as above. Since the two data files and processes don't depend on each other, they can run simultaneously, and we'll get individualized output from each job as it's completed. From this, to run all 30 years of our dataset, we can edit *clean_GHCND_dag.sub* accordingly.
+
+### Part 2: Image processing example
+
+This example illustrates running HTCondor workflows using these DAGMan capabilities.
 
 Before you start, you need to get the two Landsat image files to be processed. They are too large for me to keep in this project on GitHub, and I don't have a place to put them for you to download directly to the HTCondor system. First, in your HTCondor account:
 
