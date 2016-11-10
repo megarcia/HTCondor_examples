@@ -37,7 +37,7 @@ This example illustrates the basic HTCondor job unit.
 
 The data file *GHCND_WIS_2015.csv* is named to indicate source, geographic coverage, and temporal coverage. These are [Global Historic Climate Network-Daily (GHCND)](http://www.ncdc.noaa.gov/data-access/land-based-station-data/land-based-datasets/global-historical-climatology-network-ghcn) surface weather observations for all 1st-order and cooperative stations in the rectangle containing Wisconsin for 2015. The dataset has a header line with column names, and includes a number of fields such as location, measurements, and data quality flags. The Python script *clean_GHCND.py* was written to "clean" this raw dataset, removing flagged measurements and stations without location information, etc. This is the same routine as the Python script *process_NCEI_00.py* that is used in my [WxCD project](https://megarcia.github.io/WxCD).
 
-`$ condor_submit_dag clean_GHCND_dag.sub`
+`$ condor_submit clean_GHCND.sub`
 
 You can check the job status with
 
