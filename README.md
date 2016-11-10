@@ -49,16 +49,13 @@ When the job is completed, you'll find a lot of processing (cleaning) informatio
 
 This example illustrates running HTCondor workflows.
 
-Before you start, you need to get the two Landsat image files from my Google Drive (they are too large for me to keep on GitHub) and put them in the right place here:
+Before you start, you need to get the two Landsat image files from my [Google Drive](https://drive.google.com/open?id=0B4-FFhSfVlLyQnNrbVlDeUhyZG8). They are too large for me to keep on GitHub, and I can't figure out a place to put them for you to download directly to the HTCondor system. Download them to your own computer (they're safe, I promise) and then in your HTCondor account:
 ```
 $ cd ~/HTCondor_examples
 $ cd image_processing
 $ mkdir images
-$ cd images
-$ wget -O 20101003_276_lndsr_p026r027lt5_clipped.h5 https://drive.google.com/open?id=0B4-FFhSfVlLyQjJxX3NPTENpWkk
-$ wget -O 20111006_279_lndsr_p026r027lt5_clipped.h5 https://drive.google.com/open?id=0B4-FFhSfVlLyR1dfei11NmR1Tjg
-$ cd ../
 ```
+Now FTP the *.h5* image files from your computer to your new `~/HTCondor_examples/image_processing/images` subdirectory.
 
 The datafiles in your new *images* subdirectory are Landsat 5 images of northeastern Minnesota for dates in 2010 and 2011 almost exactly 1 year apart. Within that time, a large forest fire occurred near the middle of the image. (The effects of another large, earlier forest fire are also visible in the northern part of both images.) We often examine the extent and severity of forest fires using calculated vegetation indices and before-and-after image differencing methods. Each of these datafiles contains metadata information and images that I have already processed from raw data to show surface reflectance measurements in six spectral bands (blue, green, red, near infrared, and two in the shortwave infrared range).
 
