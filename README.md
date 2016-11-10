@@ -61,7 +61,7 @@ The next step depends on where you are working. **If you are on one of the UW-Ma
 
 `$ cp /mnt/gluster/megarcia/HTCondor_examples/images/* images/`
 
-If you are working on an HTCondor system somewhere else, open a tab in your browser to my [Google Drive folder](https://drive.google.com/open?id=0B4-FFhSfVlLyQnNrbVlDeUhyZG8) and then right click and choose "Download" for each file to save them to your own computer (they're safe, I promise), then FTP the *.h5* image files from your computer to your new `~/HTCondor_examples/image_processing/images` subdirectory.
+**If you are working on an HTCondor system somewhere else**, open a tab in your browser to my [Google Drive folder](https://drive.google.com/open?id=0B4-FFhSfVlLyQnNrbVlDeUhyZG8) and then right click and choose "Download" for each file to save them to your own computer (they're safe, I promise), then FTP the *.h5* image files from your computer to your new `~/HTCondor_examples/image_processing/images` subdirectory.
 
 The datafiles now in your new *images* subdirectory are Landsat 5 images of northeastern Minnesota for dates in 2010 and 2011 almost exactly 1 year apart. Within that time, a large forest fire occurred near the middle of the image. We often examine the extent and severity of forest fires using calculated vegetation indices and before-and-after image differencing methods. Each of these datafiles contains metadata information and images that I have already processed from raw data to show surface reflectance measurements in six spectral bands (blue, green, red, near infrared, and two in the shortwave infrared range).
 
