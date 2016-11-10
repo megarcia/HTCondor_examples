@@ -53,7 +53,7 @@ The easiest option might be to edit the *clean_GHCND.sub* file with the new file
 
 The next-easiest option might be to name those output files as desired in *clean_GHCND.sub* itself. You can edit the file names that are delivered as job log, error, and output on their respective lines so that the names are more specific to the job, e.g. *output = clean_GHCND_2015.out*. You might want to rename the submit file to *clean_GHCND_2015.sub* given how specific it is inside. Then you can copy it to *clean_GHCND_2016.sub*, edit the date everywhere it appears in that new submit file, and run your 2016 dataset as its own job. Now repeat that copy/edit/submit process 28 more times for the remainder of your 30-year dataset.
 
-Instead of all that extra work, the HTCondor system with DAGMan capabilities lets us use variables in submit files. If the only thing that really changes from one job to the next is the year, we might make that our submit file variable with a value that is assigned elsewhere. In this case, edit *clean_GHCND.sub* so that *output = clean_GHCND_$(year).out* and the log and error lines are changed likewise. Also edit it so that the *arguments* and *transfer_input_files* lines also use that variable. Your *clean_GHCND.sub* file should end up looking like this:
+Instead of all that extra work, the HTCondor system with DAGMan capabilities lets us use variables in submit files. If the only thing that really changes from one job to the next is the year, and each year of input data is contained in its own *.csv* file, we might make that our submit file variable with a value that is assigned elsewhere. In this case, edit *clean_GHCND.sub* so that *output = clean_GHCND_$(year).out* and the log and error lines are changed likewise. Edit the *arguments* and *transfer_input_files* lines to use that variable as well. Your *clean_GHCND.sub* file should end up looking like this:
 
 ```
 # UW-Madison HTCondor submit file
@@ -101,7 +101,7 @@ JOB A_2016 clean_GHCND.sub
 VARS A_2016 year="2016"
 ```
 
-Clean up your directory again if you like, then submit your new two-job DAG file with the same command as above. Since the two data files and processes don't depend on each other, they can run simultaneously, and we'll get individualized output from each job as it's completed. From this, to run all 30 years of our dataset, we can edit *clean_GHCND_dag.sub* accordingly.
+Clean up your directory again if you like, then submit your new two-job DAG file with the same command as above. Since the two data files and processes don't depend on each other, they can run simultaneously, and we'll get individualized output from each job as it's completed. From this, to process all 30 years of our dataset, we can edit *clean_GHCND_dag.sub* accordingly and get the work done in the same time it would take to process just one year of data.
 
 ### Part 2: Image processing example
 
