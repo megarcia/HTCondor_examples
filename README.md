@@ -49,15 +49,21 @@ When the job is completed, you'll find a lot of processing (cleaning) informatio
 
 This example illustrates running HTCondor workflows.
 
-Before you start, you need to get the two Landsat image files from my [Google Drive](https://drive.google.com/open?id=0B4-FFhSfVlLyQnNrbVlDeUhyZG8). They are too large for me to keep on GitHub, and I can't figure out a place to put them for you to download directly to the HTCondor system. Go to that link and then right click and choose "Download" for each file to save them to your own computer (they're safe, I promise). Then in your HTCondor account:
+Before you start, you need to get the two Landsat image files to be processed. They are too large for me to keep in this project on GitHub, and I don't have a place to put them for you to download directly to the HTCondor system. First, in your HTCondor account:
+
 ```
 $ cd ~/HTCondor_examples
 $ cd image_processing
 $ mkdir images
 ```
-Now FTP the *.h5* image files from your computer to your new `~/HTCondor_examples/image_processing/images` subdirectory.
 
-The datafiles in your new *images* subdirectory are Landsat 5 images of northeastern Minnesota for dates in 2010 and 2011 almost exactly 1 year apart. Within that time, a large forest fire occurred near the middle of the image. (The effects of another large, earlier forest fire are also visible in the northern part of both images.) We often examine the extent and severity of forest fires using calculated vegetation indices and before-and-after image differencing methods. Each of these datafiles contains metadata information and images that I have already processed from raw data to show surface reflectance measurements in six spectral bands (blue, green, red, near infrared, and two in the shortwave infrared range).
+The next step depends on where you are working. **If you are on one of the UW-Madison CHTC *submit-X* nodes**, you are welcome to copy the images from my own *gluster* directory:
+
+`$ cp /mnt/gluster/megarcia/HTCondor_examples/images/* images/`
+
+If you are working on an HTCondor system somewhere else, open a tab in your browser to my [Google Drive folder](https://drive.google.com/open?id=0B4-FFhSfVlLyQnNrbVlDeUhyZG8) and then right click and choose "Download" for each file to save them to your own computer (they're safe, I promise), then FTP the *.h5* image files from your computer to your new `~/HTCondor_examples/image_processing/images` subdirectory.
+
+The datafiles now in your new *images* subdirectory are Landsat 5 images of northeastern Minnesota for dates in 2010 and 2011 almost exactly 1 year apart. Within that time, a large forest fire occurred near the middle of the image. We often examine the extent and severity of forest fires using calculated vegetation indices and before-and-after image differencing methods. Each of these datafiles contains metadata information and images that I have already processed from raw data to show surface reflectance measurements in six spectral bands (blue, green, red, near infrared, and two in the shortwave infrared range).
 
 #### Part 2a: Short workflow
 
@@ -121,28 +127,30 @@ Since I did not invoke any script(s) to manage (delete, move, etc.) all the resu
 
 ![20101003_nbr.png](https://github.com/megarcia/HTCondor_examples/blob/master/image_processing/results/20101003_nbr.png)
 
-The result for the Normalized Difference Infrared Index (NDII) is calculated from a different Landsat band combination and shows different values, but generally similar features, over the image area. Both NDII and NBR are oriented on indicating both greenness and moisture content of the vegetation. Healthy vegetation is both green and high in moisture content, with high NDII or NBR values. Dry vegetation (as during a drought period) will likely have lower moisture content but may still be green. Senescing vegetation (as during the autumn) may be changing color but could remain filled with moisture. Dead vegetation is neither green nor (typically) full of moisture, with low NDII or NBR values.
+You can see the effects of a couple of earlier forest fires in the northern part of this image. The result for the Normalized Difference Infrared Index (NDII) is calculated from a different Landsat band combination and shows different values, but generally similar features, over the image area. Both NDII and NBR are oriented on indicating both greenness and moisture content of the vegetation. Healthy vegetation is both green and high in moisture content, with high NDII or NBR values. Dry vegetation (as during a drought period) will likely have lower moisture content but may still be green. Senescing vegetation (as during the autumn) may be changing color but could remain filled with moisture. Dead vegetation is neither green nor (typically) full of moisture, with low NDII or NBR values.
 
-Was this faster, splitting the image into chunks for processing and then stitching the results back together, than processing the whole image at once? In this case, probably not: the vegetation index calculations were relatively quick operations, and really only about half of the image is processed since the area over Lake Superior is not considered. If you have a large image but are concerned only with specific areas or if your calculation steps take a longer time, perhaps with more analysis and decisions involved, splitting up your computational domain can be quite useful. This was just an example to show a workflow, not necessarily the fastest path to the results.
+Was this this workflow, splitting the image into chunks for processing and then stitching the results back together, faster than processing the whole image at once? In this case, probably not: most vegetation index calculations are relatively quick operations, for which Python is optimized to handle for whole arrays at once. We're also really only processing about half of the image, since the area over Lake Superior is not considered. If you have a large image but are concerned only with specific areas, or if your calculation steps take a longer time with more analysis and decisions involved, splitting up your computational domain can be quite useful. This was just an example to show a workflow, not necessarily the fastest path to this particular result. If you have 200 images for this location (as I do) and lots of annual combinations to examine, building a workflow to automate the processing will save you a good amount of time in the end.
 
 #### Part 2b: Long workflow
 
-In the case of a forest fire, we may want an idea on the state of the forest before and after the event but we are also interested in the net *change* over the event. Was it a small fire that consumed ground litter but did not affect too many trees, or was it a large and intense fire that reduced entire stands to ash? In order to find this out, we use *change detection* methods. Specifically, we will use before-and-after differences to look at the fire's effects on the forest. This is exactly the method used by the US Forest Service to measure and evaluate forest fire impacts.
+In the case of a forest fire, we may want an idea on the condition of the forest before and after the event but we are also interested in the net *change* over the event. Was it a small fire that consumed ground litter but did not affect too many trees, or was it a large and intense fire that reduced entire stands to ash? In order to find this out, we use *change detection* methods. Specifically, we will use before-and-after differences to look at the fire's effects on the forest. This is exactly the method used by the US Forest Service to measure and evaluate forest fire impacts.
 
 This longer workflow uses both repetition and then extension of the shorter workflow discussed above. We will do that entire shorter workflow twice, once on each of the images available in this example. We will then combine the results to calculate a difference map. We will calculate temporal differences for both NDII and NBR, though the NBR is more often used to evaluate forest fire impacts and has a specialized calculation that we will also perform.
 
-If you want to remove the results of the short workflow example, do that now. Then,
+If you want to remove the results of the short workflow example, do that now (if you don't, the next step will simply overwrite them). Then,
 
 `$ condor_submit_dag workflow_long_dag.sub`
 
-The two images are processed in parallel to their respective vegetation indices, since that part of the workflow for each date does not depend on the results of the other. You should get the above NBR map and the corresponding map for the 2011 image, which looks like this:
+The two images are processed in parallel to their respective vegetation indices, since that part of the workflow for each date does not depend on the results of the other. You should get the above NBR map and a corresponding map for the 2011 image, which looks like this:
 
 ![20111006_nbr.png](https://github.com/megarcia/HTCondor_examples/blob/master/image_processing/results/20111006_nbr.png)
 
-You can see clearly the size and shape of the burned area near the center of this after-fire image. After these vegetation index calculations are completed for both dates, we then use both maps for each vegetation index to calculate and plot the differences. The difference-NBR (dNBR) map looks like this:
+You can see the size and shape of the burned area near the center of this after-fire image. After these vegetation index calculations are completed for both dates, we can use both maps for each vegetation index to calculate and examine the differences. The difference-NBR (dNBR) map looks like this:
 
 ![20101003_20111006_dnbr.png](https://github.com/megarcia/HTCondor_examples/blob/master/image_processing/results/20101003_20111006_dnbr.png)
 
 Our difference calculation takes into account a quirk of change detection using NBR, which often reverses the dates to give an idea of the severity of the change agent (the fire, in this case) which is the opposite of a value for the change in the vegetation health. (I myself prefer looking at NDII, but this is a better example of how fires are examined.) The US Forest Service also typically goes one step farther, adjusting the dNBR relative to its pre-fire value in case areas in the fire zone were already damaged from some earlier event. This is called the relative-dNBR (RdNBR) and for this fire event looks like this:
 
 ![20101003_20111006_rdnbr.png](https://github.com/megarcia/HTCondor_examples/blob/master/image_processing/results/20101003_20111006_rdnbr.png)
+
+Most of the image has values around 0, indicating very little change in the intervening year. In this case, the [Pagami Creek Fire in August 2011](http://www.fs.usda.gov/detail/superior/home/?cid=stelprdb5341928), the event turned severe and the damage to the affected forest area was intense. High RdNBR values cover much of the fire area except for the western lobe, which has moderate RdNBR values [where the fire started](http://inciweb.nwcg.gov/incident/map/2534/7/). The early fire, started by lightning, was fought somewhat successfully until high winds carried it southeast and then rapidly east over just a few days.
