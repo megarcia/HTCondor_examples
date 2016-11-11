@@ -15,7 +15,7 @@ PURPOSE: QA/QC of daily meteorological station data in GHCND datasets
 
 DEPENDENCIES: h5py, numpy, pandas
 
-USAGE: '$ python clean_GHCND.py GHCND_WIS_2015.csv ./.'
+USAGE: '$ python clean_GHCND.py GHCND_WIS_2015.csv'
 
 INPUT: Station meteorological data from GHCND in '.csv' format (one file)
 
@@ -76,17 +76,11 @@ message(' ')
 message('clean_GHCND.py started at %s' % datetime.datetime.now().isoformat())
 message(' ')
 #
-if len(sys.argv) < 3:
-    message('input warning: no data directory path indicated, using ./data')
-    path = './data'
-else:
-    path = sys.argv[2]
-#
 if len(sys.argv) < 2:
     message('input error: need CSV file containing GHCND weather data')
     sys.exit(1)
 else:
-    GHCNDfname = '%s/%s' % (path, sys.argv[1])
+    GHCNDfname = sys.argv[1]
 cleaneddatafile = '%s_cleaned.csv' % GHCNDfname[:-4]
 errorsdatafile = '%s_errors.csv' % GHCNDfname[:-4]
 stnmetadatafile = '%s_stnmeta.csv' % GHCNDfname[:-4]

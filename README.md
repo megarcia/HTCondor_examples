@@ -1,6 +1,6 @@
-## HTC_examples
+# HTC_examples
 
-### Part 0: Setup
+## Part 0: Setup
 
 Assuming that you have already installed [miniconda3](http://conda.pydata.org/miniconda.html) and that it resides in a subdirectory named "miniconda3" in your HTC home directory ...
 
@@ -49,9 +49,9 @@ When the job is completed, you'll find a lot of processing (cleaning) informatio
 
 Let's say you have another year of data in *GHCND_WIS_2016.csv* that you want to process in the same way. You have a few ways forward here.
 
-The easiest option might be to edit the *clean_GHCND.sub* file with the new file name, then run the job as we did for the 2015 file. At the end of the job you'll receive new *.csv* output files for the 2016 dataset, as desired, but you'll also get back a new *clean_GHCND.out* file that will overwrite your 2015 *clean_GHCND.out* file that you may have wanted for a record of the processing decisions. You can manually rename the old one to *clean_GHCND_2015.out* before running the new one, and then manually rename the new output as well. For a couple of files, it gets the job done, but what if you have 30 years of data in separate files?
+The easiest option might be to edit the *clean_GHCND.sub* file with the new file name, then run the job as we did for the 2015 file. At the end of the job you'll receive new *.csv* output files for the 2016 dataset, as desired, but you'll also get back a new *clean_GHCND.out* file that will overwrite your 2015 *clean_GHCND.out* file that you may have wanted to keep as a record of the processing decisions. You can manually rename the old one to *clean_GHCND_2015.out* before running the new one, and then manually rename the new output as well. For a couple of files, this gets the job done, but what if you have 30 years of data in separate files?
 
-The next-easiest option might be to name those output files as desired in *clean_GHCND.sub* itself. You can edit the file names that are delivered as job log, error, and output on their respective lines so that the names are more specific to the job, e.g. *output = clean_GHCND_2015.out*. You might want to rename the submit file to *clean_GHCND_2015.sub* given how specific it is inside. Then you can copy it to *clean_GHCND_2016.sub*, edit the date everywhere it appears in that new submit file, and run your 2016 dataset as its own job. Now repeat that copy/edit/submit process 28 more times for the remainder of your 30-year dataset.
+The next-easiest option might be to name those output files as desired in *clean_GHCND.sub* itself. You can edit the file names that are delivered as job *log*, *error*, and *output* on their respective lines so that the names are specific to the dataset, e.g. *output = clean_GHCND_2015.out*. You might want to rename the submit file to *clean_GHCND_2015.sub* given how specific it is now on the inside. Then you can copy it to *clean_GHCND_2016.sub*, edit that new submit file everywhere the date appears, and run your 2016 dataset as its own separate unit. You could then repeat this copy/edit/submit process 28 more times for the remainder of your 30-year dataset.
 
 Instead of all that extra work, the HTCondor system with DAGMan capabilities lets us use variables in submit files. If the only thing that really changes from one job to the next is the year, and each year of input data is contained in its own *.csv* file, we might make that our submit file variable with a value that is assigned elsewhere. In this case, edit *clean_GHCND.sub* so that *output = clean_GHCND_$(year).out* and the log and error lines are changed likewise. Edit the *arguments* and *transfer_input_files* lines to use that variable as well. Your *clean_GHCND.sub* file should end up looking like this:
 
@@ -62,7 +62,7 @@ universe = vanilla
 log = clean_GHCND_$(year).log
 error = clean_GHCND_$(year).err
 executable = clean_GHCND.sh
-arguments = GHCND_WIS_$(year).csv ./.
+arguments = GHCND_WIS_$(year).csv
 output = clean_GHCND_$(year).out
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
@@ -103,7 +103,7 @@ VARS A_2016 year="2016"
 
 If you had that *GHCND_WIS_2016.csv* datafile in place, you could submit your new two-job DAG file with the same command as above. Since the two data files and processes wouldn't depend on each other, they could run simultaneously, and you'd get individualized output from each job as it's completed. From this, to process all 30 years of the hypothetical dataset, you can edit *clean_GHCND_dag.sub* accordingly and get all of the processing done in the same time it would take to process just one year of data.
 
-### Part 2: Image processing example
+## Part 2: Image processing example
 
 This example illustrates running HTCondor workflows using these DAGMan capabilities.
 
@@ -123,7 +123,7 @@ The next step depends on where you are working. **If you are on one of the UW-Ma
 
 The datafiles now in your new *images* subdirectory are Landsat 5 images of northeastern Minnesota for dates in 2010 and 2011 almost exactly 1 year apart. Within that time, a large forest fire occurred near the middle of the image. We often examine the extent and severity of forest fires using calculated vegetation indices and before-and-after image differencing methods. Each of these datafiles contains metadata information and images that I have already processed from raw data to surface reflectance values in six spectral bands: blue, green, red, near infrared (NIR), and two in the shortwave infrared (SWIR) range.
 
-#### Part 2a: Short workflow
+### Part 2a: Short workflow
 
 From these spectral band images we will calculate two vegetation indices, both of which are designed to indicate vegetation health and vigor. We'll do this first in a shorter example for the 2010 image, which will show before-fire forest conditions. Since the image is around the beginning of October, we'll see some effects of autumn leaf changes. We'll also see the condition of the forest areas that burned in 2006 and 2007 in the northern portion of the image.
 
@@ -189,7 +189,7 @@ You can see the effects of a couple of earlier forest fires in the northern part
 
 Was this workflow, splitting the image into chunks for processing and then stitching the results back together, faster than processing the whole image at once? In this case, probably not: most vegetation index calculations are relatively quick operations, for which Python is optimized to handle for whole arrays at once. If you have a large image but are concerned only with specific areas, or if your calculation steps take a longer time with more analysis and decisions involved, splitting up your computational domain can be quite useful. This was just an example to show a processing workflow, not necessarily the fastest path to this particular result. If you have 200 images for this location (as I do) with lots of vegetation indices and annual combinations to examine, building a workflow to automate the processing will save you a good amount of time in the end.
 
-#### Part 2b: Long workflow
+### Part 2b: Long workflow
 
 In the case of a forest fire, we may want an idea on the condition of the forest before and after the event but we are also interested in the net *change* over the event. Was it a small fire that consumed ground litter but did not affect too many trees, or was it a large and intense fire that reduced entire stands to ash? In order to find this out, we use *change detection* methods. Specifically, we will use before-and-after differences to look at the fire's effects on the forest. This is exactly the method used by the US Forest Service to measure and evaluate forest fire impacts.
 
