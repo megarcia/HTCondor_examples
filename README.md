@@ -107,7 +107,7 @@ If you had that *GHCND_WIS_2016.csv* datafile in place, you could submit your ne
 
 This example illustrates running HTCondor workflows using these DAGMan capabilities.
 
-Before you start, you need to get the two Landsat image files to be processed. They are too large for me to keep in this project on GitHub, and I don't have a place to put them for you to download directly to the HTCondor system. First, in your HTCondor account:
+Before you start, you need to get the two Landsat image files to be processed. They are too large (~100 MB each) for me to keep in this project on GitHub, and I don't yet have a place on the web to put them for you to download directly to the HTCondor system. First, in your HTCondor account:
 
 ```
 $ cd ~/HTCondor_examples
@@ -115,13 +115,13 @@ $ cd image_processing
 $ mkdir images
 ```
 
-The next step depends on where you are working. **If you are on one of the UW-Madison CHTC *submit-X* nodes**, you are welcome to copy the images from my own *gluster* directory:
+The next step depends on where you are working. **If you are working on one of the UW-Madison CHTC *submit-X* nodes**, you are welcome to copy the images from my own *gluster* directory:
 
 `$ cp /mnt/gluster/megarcia/HTCondor_examples/images/* images/`
 
-**If you are working on an HTCondor system somewhere else**, open a tab in your browser to my [Google Drive folder](https://drive.google.com/open?id=0B4-FFhSfVlLyQnNrbVlDeUhyZG8) and then right click and choose "Download" for each file to save them to your own computer (they're safe, I promise), then FTP the *.h5* image files from your computer to your new `~/HTCondor_examples/image_processing/images` subdirectory.
+**If you are working on an HTCondor system somewhere else**, open a tab in your browser to my [Google Drive folder](https://drive.google.com/open?id=0B4-FFhSfVlLyQnNrbVlDeUhyZG8) and right click and choose "Download" for each file to save them to your own computer (they're safe, I promise). Then SFTP or otherwise transfer the two *.h5* image files from your computer to your new `~/HTCondor_examples/image_processing/images` subdirectory.
 
-The datafiles now in your new *images* subdirectory are Landsat 5 images of northeastern Minnesota for dates in 2010 and 2011 almost exactly 1 year apart. Within that time, a large forest fire occurred near the middle of the image. We often examine the extent and severity of forest fires using calculated vegetation indices and before-and-after image differencing methods. Each of these datafiles contains metadata information and images that I have already processed from raw data to surface reflectance values in six spectral bands: blue, green, red, near infrared (NIR), and two in the shortwave infrared (SWIR) range.
+The datafiles now in your new *images* subdirectory are Landsat 5 images of northeastern Minnesota for dates in 2010 and 2011 almost exactly 1 year apart. Within that time, a large forest fire occurred near the middle of the image. We often examine the extent and severity of forest fires using calculated vegetation indices and before-and-after image differencing methods. Each of these datafiles contains metadata information and images that I have already processed from raw data to surface reflectance values in six spectral bands: blue, green, red, near infrared (NIR), and two in the shortwave infrared (SWIR) range. We see RGB digital images all the time, and can generate them from the first three bands in the Landsat dataset. Part of the power of Landsat data is really in the NIR and SWIR bands, beyond human vision but very useful for looking at forests and other land cover. Landsat sensors also provide a couple additional spectral bands, including one in the thermal infrared (TIR) range that is useful for calculating surface temperatures and for detecting even small forest fires in remote areas.
 
 ### Part 2a: Short workflow
 
