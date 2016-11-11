@@ -91,7 +91,7 @@ Then type a slightly different command:
 
 `$ condor_submit_dag clean_GHCND_dag.sub`
 
-When the job is complete, we should get the same output that we received the first time through, but with the output files named a little more specifically, as we'll want when processing more than one year of data. So let's add another job to *clean_GHCND_dag.sub*:
+When the job is complete, we should get the same output that we received the first time through, but with the output files named a little more specifically, as we'll want when processing more than one year of data. We could add another job to *clean_GHCND_dag.sub*:
 
 ```
 JOB A_2015 clean_GHCND.sub
@@ -101,7 +101,7 @@ JOB A_2016 clean_GHCND.sub
 VARS A_2016 year="2016"
 ```
 
-Clean up your directory again if you like, then submit your new two-job DAG file with the same command as above. Since the two data files and processes don't depend on each other, they can run simultaneously, and we'll get individualized output from each job as it's completed. From this, to process all 30 years of our dataset, we can edit *clean_GHCND_dag.sub* accordingly and get the work done in the same time it would take to process just one year of data.
+If you had that *GHCND_WIS_2016.csv* datafile in place, you could submit your new two-job DAG file with the same command as above. Since the two data files and processes wouldn't depend on each other, they could run simultaneously, and you'd get individualized output from each job as it's completed. From this, to process all 30 years of the hypothetical dataset, you can edit *clean_GHCND_dag.sub* accordingly and get all of the processing done in the same time it would take to process just one year of data.
 
 ### Part 2: Image processing example
 
