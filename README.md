@@ -117,7 +117,7 @@ $ mkdir images
 
 The next step depends on where you are working. **If you are working on one of the UW-Madison CHTC submit nodes (including *townsend-submit*)**, you are welcome to copy the images from my own *squid* directory:
 
-`$ cp /mnt/squid/megarcia/HTCondor_examples/images/* images/`
+`$ cp /squid/megarcia/HTCondor_examples/images/* images/`
 
 **If you are working on an HTCondor system somewhere else**, open a tab in your browser to my [squid directory](http://proxy.chtc.wisc.edu/SQUID/megarcia/HTCondor_examples/images/) and right click and choose "Download" for each file to save them to your own computer (they're safe, I promise). Then SFTP or otherwise transfer the two *.h5* image files from your computer to your new `~/HTCondor_examples/image_processing/images` subdirectory.
 
