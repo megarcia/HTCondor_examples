@@ -12,5 +12,5 @@ transfer_input_files = ../python3.tar.gz,diff_vi.py,plot.py,$(date1)_$(var).h5,$
 request_cpus = 1
 request_memory = 8GB
 request_disk = 8GB
-requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
+requirements = (OpSys == "LINUX") && (OpSysMajorVer == 7)
 queue 1

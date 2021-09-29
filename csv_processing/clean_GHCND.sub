@@ -12,5 +12,5 @@ transfer_input_files = ../python3.tar.gz,clean_GHCND.py,GHCND_WIS_2015.csv
 request_cpus = 1
 request_memory = 8GB
 request_disk = 8GB
-requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
+requirements = (OpSys == "LINUX") && (OpSysMajorVer == 7)
 queue 1
